@@ -1,20 +1,23 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Button } from "reactstrap";
 import Header from "./Header";
-import dogsData from "./dogsdata";
+import routes from "./routes";
+import { Switch, Route } from "react-router-dom";
 
 function App() {
     return (
         <div className="App">
             <Header></Header>
-            <ul>
-                {dogsData.map((dog) => (
-                    <li>
-                        <Button>{dog.name}</Button>
-                    </li>
+            <Switch>
+                {routes.map((route) => (
+                    <Route
+                        key={route.path}
+                        path={route.path}
+                        exact={route.isExact}
+                        component={route.component}
+                    ></Route>
                 ))}
-            </ul>
+            </Switch>
         </div>
     );
 }
