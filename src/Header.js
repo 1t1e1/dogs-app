@@ -8,6 +8,8 @@ import {
     NavItem,
     NavLink,
 } from "reactstrap";
+import { Link } from "react-router-dom";
+import routes from "./routes";
 
 const Header = (props) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,18 +19,23 @@ const Header = (props) => {
     return (
         <div>
             <Navbar color="light" light expand="md">
-                <NavbarBrand href="/">Dogs App</NavbarBrand>
+                <NavbarBrand>
+                    <Link to="/">Dogs App</Link>
+                </NavbarBrand>
                 <NavbarToggler onClick={toggle} />
                 <Collapse isOpen={isOpen} navbar>
                     <Nav className="mr-auto" navbar>
-                        <NavItem>
-                            <NavLink href="/components/">Cavalier King</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink href="https://github.com/reactstrap/reactstrap">
-                                Golden Retriever
-                            </NavLink>
-                        </NavItem>
+                        {routes
+                            .filter((route) => route.path !== "/")
+                            .map((route) => (
+                                <NavItem>
+                                    <NavLink>
+                                        <Link to={route.path}>
+                                            {route.title}
+                                        </Link>
+                                    </NavLink>
+                                </NavItem>
+                            ))}
                     </Nav>
                 </Collapse>
             </Navbar>
