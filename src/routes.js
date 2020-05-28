@@ -1,6 +1,6 @@
+import React from "react";
 import Homepage from "./containers/Homepage";
-import Cavaliers from "./containers/Cavaliers";
-import Goldens from "./containers/Goldens";
+import FilteredDogList from "./containers/FilteredDogList";
 
 const routes = [
     {
@@ -10,16 +10,15 @@ const routes = [
         title: "Dogs App",
     },
     {
-        path: "/tur/golden-retriever",
+        path: "/tur/:yazilanTur",
         isExact: true,
-        component: Goldens,
-        title: "Goldens",
+        component: FilteredDogList,
     },
     {
-        path: "/tur/cavalier-king-charles-spaniel",
-        isExact: true,
-        component: Cavaliers,
-        title: "Cavaliers",
+        path: "/about",
+        isExact: false,
+        component: () => <div> hakimizda </div>,
+        title: "About",
     },
 ];
 

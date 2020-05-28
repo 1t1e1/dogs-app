@@ -1,6 +1,6 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Header from "./Header";
+import Header from "./containers/Header";
 import routes from "./routes";
 import { Switch, Route } from "react-router-dom";
 
