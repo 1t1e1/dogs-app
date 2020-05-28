@@ -16,11 +16,14 @@ export default function DogList(props) {
     const filteredData = dogsData.filter((dog) => dog.breed === turUrlFriendly);
     console.log(props);
     return turUrlFriendly ? (
-        <ul>
-            {filteredData.map((dog) => (
-                <li key={dog.id}>{dog.name} </li>
-            ))}
-        </ul>
+        <div>
+            <h1> {turUrlFriendly}</h1>
+            <ul>
+                {filteredData.map((dog) => (
+                    <li key={dog.id}>{dog.name} </li>
+                ))}
+            </ul>
+        </div>
     ) : (
         <div>
             <h1> Url may be wrong. Careful! </h1>
