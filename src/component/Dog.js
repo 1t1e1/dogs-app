@@ -1,28 +1,17 @@
 import React from "react";
-import { Button } from "reactstrap";
+import FavAction from "./FavAction";
 
 const Dog = (props) => {
-	if (props.status) {
-		return (
-			<div>
-				{props.name}
-				<span> {"   "}</span>
-				<Button onClick={props.handleClick} color="danger">
-					Favorilerden Cikar
-				</Button>
-			</div>
-		);
-	} else {
-		return (
-			<div>
-				{props.name}
-				<span> {"   "}</span>
-				<Button color="primary" onClick={props.handleClick}>
-					Favorilere Ekle
-				</Button>
-			</div>
-		);
-	}
+	return (
+		<div>
+			{props.name}
+			<span> {"   "}</span>
+			<FavAction
+				status={props.status}
+				handleClick={props.handleClick}
+			></FavAction>
+		</div>
+	);
 };
 
 export default Dog;

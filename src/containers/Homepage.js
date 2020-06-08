@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Dog from "../component/Dog";
+import { ListGroup, ListGroupItem } from "reactstrap";
 import dogsData from "../dogsdata";
 
 export default class Homepage extends Component {
@@ -29,9 +30,9 @@ export default class Homepage extends Component {
 		return (
 			<div>
 				<h1>this is home page</h1>
-				<ul>
+				<ListGroup>
 					{dogsData.map((dog) => (
-						<li key={dog.id}>
+						<ListGroupItem key={dog.id}>
 							<Dog
 								status={this.getStatus(dog.id)}
 								name={dog.name}
@@ -39,9 +40,9 @@ export default class Homepage extends Component {
 									this.toggleFav(dog.id);
 								}}
 							></Dog>
-						</li>
+						</ListGroupItem>
 					))}
-				</ul>
+				</ListGroup>
 			</div>
 		);
 	}
