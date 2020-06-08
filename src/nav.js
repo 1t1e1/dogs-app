@@ -1,11 +1,11 @@
 const nav = [
     {
         path: "/tur/golden-retriever",
-        title: "Golden Retriever",
+        title: "Goldens",
     },
     {
         path: "/tur/cavalier-king-charles-spaniel",
-        title: "Cavalier King Charles Spaniel",
+        title: "Cavaliers"
     },
     {
         path: "/about",
