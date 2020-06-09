@@ -9,15 +9,33 @@ export default class Homepage extends Component {
 		this.state = { favs: [] };
 	}
 
+	componentDidMount() {
+		const json = localStorage.getItem("favs");
+
+		let favs;
+		if (JSON.parse(json) === null) {
+			favs = [];
+		} else {
+			favs = JSON.parse(json);
+		}
+		this.setState({ favs: favs });
+	}
+
 	toggleFav = (id, name) => {
 		const favs = [...this.state.favs];
 		const indexOfId = favs.indexOf(id);
 
 		if (indexOfId === -1) {
-			this.setState({ favs: [...favs, id] });
+			this.setState({ favs: [...favs, id] }, () => {
+				const json = JSON.stringify(this.state.favs);
+				localStorage.setItem("favs", json);
+			});
 		} else {
 			favs.splice(indexOfId, 1);
-			this.setState({ favs: favs });
+			this.setState({ favs: favs }, () => {
+				const json = JSON.stringify(this.state.favs);
+				localStorage.setItem("favs", json);
+			});
 		}
 	};
 
