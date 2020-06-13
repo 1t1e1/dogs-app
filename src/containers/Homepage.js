@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Dog from "../component/Dog";
 import { ListGroup, ListGroupItem } from "reactstrap";
 import dogsData from "../dogsdata";
+import url from "../apiconf";
 
 export default class Homepage extends Component {
 	constructor(props) {
@@ -10,38 +11,67 @@ export default class Homepage extends Component {
 	}
 
 	componentDidMount() {
-		const json = localStorage.getItem("favs");
-
-		let favs;
-		if (JSON.parse(json) === null) {
-			favs = [];
-		} else {
-			favs = JSON.parse(json);
-		}
-		this.setState({ favs: favs });
+		fetch(url, {
+			method: "GET",
+			mode: "cors",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+			.then((res) => res.json())
+			.then((json) => {
+				this.setState({ favs: json });
+			});
 	}
 
-	toggleFav = (id, name) => {
+	toggleFav = (id) => {
 		const favs = [...this.state.favs];
-		const indexOfId = favs.indexOf(id);
+		const foundDog = favs.find((el) => {
+			return el.dogId === id;
+		});
 
-		if (indexOfId === -1) {
-			this.setState({ favs: [...favs, id] }, () => {
-				const json = JSON.stringify(this.state.favs);
-				localStorage.setItem("favs", json);
+		if (!foundDog) {
+			// Burada ekleme yaparken api dan id yi alamiyorum,
+			// Ekle cikar yapinca gorunmuyor ama sorun var.
+			// Nasil yapilacagini arastir.
+			this.setState({ favs: [...favs, { dogId: id }] }, () => {
+				fetch(url, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json;charset=utf-8",
+					},
+					body: JSON.stringify({ dogId: id }),
+				})
+					.then((result) => {
+						console.log("ekleme yaparken");
+						console.log(result);
+					})
+					.catch((err) => console.log(err));
 			});
 		} else {
-			favs.splice(indexOfId, 1);
+			const indexOf = favs.indexOf(foundDog);
+			favs.splice(indexOf, 1);
+			console.log("this is founddd", foundDog);
+
 			this.setState({ favs: favs }, () => {
-				const json = JSON.stringify(this.state.favs);
-				localStorage.setItem("favs", json);
+				fetch(url + "/" + foundDog.id, {
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json;charset=utf-8",
+					},
+				})
+					.then((response) => {
+						console.log(response);
+						return response;
+					})
+					.catch((err) => console.log(err));
 			});
 		}
 	};
 
 	getStatus = (id) => {
 		const favs = this.state.favs;
-		return favs.includes(id);
+		return favs.find((el) => el.dogId === id);
 	};
 
 	render() {
