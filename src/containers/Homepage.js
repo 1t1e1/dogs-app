@@ -20,6 +20,7 @@ export default class Homepage extends Component {
 		})
 			.then((res) => res.json())
 			.then((json) => {
+				// console.log(json);
 				this.setState({ favs: json });
 			});
 	}
@@ -31,41 +32,42 @@ export default class Homepage extends Component {
 		});
 
 		if (!foundDog) {
-			// Burada ekleme yaparken api dan id yi alamiyorum,
-			// Ekle cikar yapinca gorunmuyor ama sorun var.
-			// Nasil yapilacagini arastir.
-			this.setState({ favs: [...favs, { dogId: id }] }, () => {
-				fetch(url, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json;charset=utf-8",
-					},
-					body: JSON.stringify({ dogId: id }),
+			fetch(url, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json;charset=utf-8",
+				},
+				body: JSON.stringify({ dogId: id }),
+			})
+				.then((result) => result.json())
+				.then((data) => {
+					console.log(data);
+					this.setState({ favs: [...favs, data] });
+					return data;
 				})
-					.then((result) => {
-						console.log("ekleme yaparken");
-						console.log(result);
-					})
-					.catch((err) => console.log(err));
-			});
+				.catch((err) => console.log(err));
+			// });
 		} else {
 			const indexOf = favs.indexOf(foundDog);
 			favs.splice(indexOf, 1);
 			console.log("this is founddd", foundDog);
 
-			this.setState({ favs: favs }, () => {
-				fetch(url + "/" + foundDog.id, {
-					method: "DELETE",
-					headers: {
-						"Content-Type": "application/json;charset=utf-8",
-					},
+			fetch(url + "/" + foundDog.id, {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json;charset=utf-8",
+				},
+			})
+				.then((response) => {
+					console.log(response);
+					return response.json();
 				})
-					.then((response) => {
-						console.log(response);
-						return response;
-					})
-					.catch((err) => console.log(err));
-			});
+				.then((response) => {
+					console.log(response);
+					this.setState({ favs: favs });
+					return response;
+				})
+				.catch((err) => console.log(err));
 		}
 	};
 
