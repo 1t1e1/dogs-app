@@ -8,14 +8,23 @@ import axios from "axios";
 export default class Homepage extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { favs: [] };
+		this.state = {
+			favs: [],
+			loadingFavorites: false,
+		};
 	}
 
 	componentDidMount() {
+		this.setState({
+			loadingFavorites: true,
+		});
 		axios
 			.get(url)
 			.then((response) => {
-				this.setState({ favs: response.data });
+				this.setState({
+					favs: response.data,
+					loadingFavorites: false,
+				});
 			})
 			.catch(function (error) {
 				console.log(error);
@@ -28,16 +37,26 @@ export default class Homepage extends Component {
 			return el.dogId === id;
 		});
 
+		this.setState({
+			loadingFavorites: true,
+		});
+
 		if (!foundDog) {
 			axios
 				.post(url, {
 					dogId: id,
 				})
 				.then((response) => {
-					this.setState({ favs: [...favs, response.data] });
+					this.setState({
+						favs: [...favs, response.data],
+						loadingFavorites: false,
+					});
 				})
 				.catch(function (error) {
 					console.log(error);
+					this.setState({
+						loadingFavorites: false,
+					});
 				});
 		} else {
 			axios
@@ -47,10 +66,14 @@ export default class Homepage extends Component {
 						favs: this.state.favs.filter(
 							(el) => el.id !== response.data.id
 						),
+						loadingFavorites: false,
 					});
 				})
 				.catch(function (error) {
 					console.log(error);
+					this.setState({
+						loadingFavorites: false,
+					});
 				});
 		}
 	};
@@ -61,23 +84,32 @@ export default class Homepage extends Component {
 	};
 
 	render() {
-		return (
-			<div>
-				<h1>this is home page</h1>
-				<ListGroup>
-					{dogsData.map((dog) => (
-						<ListGroupItem key={dog.id}>
-							<Dog
-								status={this.getStatus(dog.id)}
-								name={dog.name}
-								handleClick={() => {
-									this.toggleFav(dog.id);
-								}}
-							></Dog>
-						</ListGroupItem>
-					))}
-				</ListGroup>
-			</div>
-		);
+		if (this.state.loadingFavorites) {
+			return (
+				<div>
+					<h1>this is home page</h1>
+					<p> Dog list loading</p>
+				</div>
+			);
+		} else {
+			return (
+				<div>
+					<h1>this is home page</h1>
+					<ListGroup>
+						{dogsData.map((dog) => (
+							<ListGroupItem key={dog.id}>
+								<Dog
+									status={this.getStatus(dog.id)}
+									name={dog.name}
+									handleClick={() => {
+										this.toggleFav(dog.id);
+									}}
+								></Dog>
+							</ListGroupItem>
+						))}
+					</ListGroup>
+				</div>
+			);
+		}
 	}
 }
