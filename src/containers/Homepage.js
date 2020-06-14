@@ -3,6 +3,7 @@ import Dog from "../component/Dog";
 import { ListGroup, ListGroupItem } from "reactstrap";
 import dogsData from "../dogsdata";
 import url from "../apiconf";
+import axios from "axios";
 
 export default class Homepage extends Component {
 	constructor(props) {
@@ -11,17 +12,13 @@ export default class Homepage extends Component {
 	}
 
 	componentDidMount() {
-		fetch(url, {
-			method: "GET",
-			mode: "cors",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		})
-			.then((res) => res.json())
-			.then((json) => {
-				// console.log(json);
-				this.setState({ favs: json });
+		axios
+			.get(url)
+			.then((response) => {
+				this.setState({ favs: response.data });
+			})
+			.catch(function (error) {
+				console.log(error);
 			});
 	}
 
@@ -32,42 +29,29 @@ export default class Homepage extends Component {
 		});
 
 		if (!foundDog) {
-			fetch(url, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json;charset=utf-8",
-				},
-				body: JSON.stringify({ dogId: id }),
-			})
-				.then((result) => result.json())
-				.then((data) => {
-					console.log(data);
-					this.setState({ favs: [...favs, data] });
-					return data;
+			axios
+				.post(url, {
+					dogId: id,
 				})
-				.catch((err) => console.log(err));
-			// });
+				.then((response) => {
+					this.setState({ favs: [...favs, response.data] });
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
 		} else {
-			const indexOf = favs.indexOf(foundDog);
-			favs.splice(indexOf, 1);
-			console.log("this is founddd", foundDog);
-
-			fetch(url + "/" + foundDog.id, {
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json;charset=utf-8",
-				},
-			})
+			axios
+				.delete(`${url}/${foundDog.id}`)
 				.then((response) => {
-					console.log(response);
-					return response.json();
+					this.setState({
+						favs: this.state.favs.filter(
+							(el) => el.id !== response.data.id
+						),
+					});
 				})
-				.then((response) => {
-					console.log(response);
-					this.setState({ favs: favs });
-					return response;
-				})
-				.catch((err) => console.log(err));
+				.catch(function (error) {
+					console.log(error);
+				});
 		}
 	};
 
