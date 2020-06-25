@@ -63,9 +63,7 @@ export default class Homepage extends Component {
 				.delete(`${url}/${foundDog.id}`)
 				.then((response) => {
 					this.setState({
-						favs: this.state.favs.filter(
-							(el) => el.id !== response.data.id
-						),
+						favs: this.state.favs.filter((el) => el.id !== response.data.id),
 						loadingFavorites: false,
 					});
 				})
@@ -94,7 +92,6 @@ export default class Homepage extends Component {
 		} else {
 			return (
 				<div>
-					<h1>this is home page</h1>
 					<ListGroup>
 						{dogsData.map((dog) => (
 							<ListGroupItem key={dog.id}>

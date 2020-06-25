@@ -1,6 +1,7 @@
 import React from "react";
 import Homepage from "./containers/Homepage";
 import FilteredDogList from "./containers/FilteredDogList";
+import DogDetail from "./containers/DogDetail";
 
 const routes = [
 	{
@@ -18,6 +19,11 @@ const routes = [
 		path: "/about",
 		isExact: false,
 		component: () => <div> hakimizda </div>,
+	},
+	{
+		path: "/detail/:dogId",
+		isExact: true,
+		component: DogDetail,
 	},
 	{
 		path: "/:notFound",
