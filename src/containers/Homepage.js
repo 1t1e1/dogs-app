@@ -1,45 +1,39 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import Dog from "../component/Dog";
 import { ListGroup, ListGroupItem } from "reactstrap";
 import dogsData from "../dogsdata";
 import url from "../apiconf";
 import axios from "axios";
 
-export default class Homepage extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			favs: [],
-			loadingFavorites: false,
-		};
-	}
-
-	componentDidMount() {
-		this.setState({
-			loadingFavorites: true,
-		});
+export default function Homepage() {
+	const [favs, setFavs] = useState([]);
+	const [loadingFavs, setLoadingFavs] = useState(false);
+	useEffect(() => {
+		setLoadingFavs(true);
 		axios
 			.get(url)
 			.then((response) => {
-				this.setState({
-					favs: response.data,
-					loadingFavorites: false,
-				});
+				setFavs(response.data);
+				// setLoadingFavs(false);
+				// useEffect kullandim.
+				console.log(favs, "favs degistirildi");
+				console.log(response.data);
 			})
 			.catch(function (error) {
 				console.log(error);
 			});
-	}
+	}, []);
 
-	toggleFav = (id) => {
-		const favs = [...this.state.favs];
+	useEffect(() => {
+		setLoadingFavs(false);
+	}, [favs]);
+
+	function toggleFav(id) {
 		const foundDog = favs.find((el) => {
 			return el.dogId === id;
 		});
 
-		this.setState({
-			loadingFavorites: true,
-		});
+		setLoadingFavs(true);
 
 		if (!foundDog) {
 			axios
@@ -47,66 +41,47 @@ export default class Homepage extends Component {
 					dogId: id,
 				})
 				.then((response) => {
-					this.setState({
-						favs: [...favs, response.data],
-						loadingFavorites: false,
-					});
+					setFavs([...favs, response.data]);
 				})
 				.catch(function (error) {
 					console.log(error);
-					this.setState({
-						loadingFavorites: false,
-					});
 				});
 		} else {
 			axios
 				.delete(`${url}/${foundDog.id}`)
 				.then((response) => {
-					this.setState({
-						favs: this.state.favs.filter((el) => el.id !== response.data.id),
-						loadingFavorites: false,
-					});
+					setFavs(favs.filter((el) => el.id !== response.data.id));
 				})
 				.catch(function (error) {
 					console.log(error);
-					this.setState({
-						loadingFavorites: false,
-					});
 				});
 		}
-	};
-
-	getStatus = (id) => {
-		const favs = this.state.favs;
-		return favs.find((el) => el.dogId === id);
-	};
-
-	render() {
-		if (this.state.loadingFavorites) {
-			return (
-				<div>
-					<h1>this is home page</h1>
-					<p> Dog list loading</p>
-				</div>
-			);
-		} else {
-			return (
-				<div>
-					<ListGroup>
-						{dogsData.map((dog) => (
-							<ListGroupItem key={dog.id}>
-								<Dog
-									status={this.getStatus(dog.id)}
-									name={dog.name}
-									handleClick={() => {
-										this.toggleFav(dog.id);
-									}}
-								></Dog>
-							</ListGroupItem>
-						))}
-					</ListGroup>
-				</div>
-			);
-		}
 	}
+
+	function getStatus(id) {
+		return favs.find((el) => el.dogId === id);
+	}
+
+	return loadingFavs ? (
+		<div>
+			<h1>this is home page</h1>
+			<p> Dog list loading</p>
+		</div>
+	) : (
+		<div>
+			<ListGroup>
+				{dogsData.map((dog) => (
+					<ListGroupItem key={dog.id}>
+						<Dog
+							status={getStatus(dog.id)}
+							name={dog.name}
+							handleClick={() => {
+								toggleFav(dog.id);
+							}}
+						></Dog>
+					</ListGroupItem>
+				))}
+			</ListGroup>
+		</div>
+	);
 }
