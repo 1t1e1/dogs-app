@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import FavAction from "./FavAction";
 import { Link } from "react-router-dom";
 
-export default class Dog extends React.PureComponent {
+export default class Dog extends Component {
 	componentDidMount() {
 		console.log("dog did mount");
 	}
@@ -10,14 +10,13 @@ export default class Dog extends React.PureComponent {
 		console.log("dog will unmount");
 	}
 	shouldComponentUpdate(nextProps, nextState) {
-		// if (this.props.status === nextProps.status)
-		//   return false;
+		if (this.props.status === nextProps.status) return false;
 		return true;
 	}
 
 	render() {
-		// if ( this.props.name === 'MAPLE')
-		console.log("Dog rendered ", this.props.name);
+		if (this.props.name === "MAPLE")
+			console.log("Dog rendered ", this.props.name);
 		return (
 			<div>
 				<Link to={"/detail/" + this.props.name}>
